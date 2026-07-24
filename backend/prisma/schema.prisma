@@ -1,0 +1,108 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  firebaseUid   String    @unique
+  phone         String?   @unique
+  name          String?
+  role          String    @default("USER") // USER, DRIVER, ADMIN
+  walletBalance Float     @default(0.0) // محفظة المستخدم
+  fcmToken      String?   // رمز الإشعارات للهاتف
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  driverProfile Driver?
+  tripsAsRider  Trip[]    @relation("RiderTrips")
+  payments      Payment[]
+}
+
+model Driver {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @unique
+  user           User      @relation(fields: [userId], references: [id])
+  vehicleType    String    @default("Tricycle")
+  plateNumber    String?   @unique
+  nationalId     String?   @unique
+  idCardFront    String?
+  idCardBack     String?
+  rating         Float     @default(5.0)
+  isOnline       Boolean   @default(false)
+  approvalStatus String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  currentLat     Float?
+  currentLng     Float?
+  walletBalance  Float     @default(0.0) // محفظة السائق المتخصصة في الأرباح
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  trips         Trip[]   @relation("DriverTrips")
+}
+
+model Trip {
+  id            Int       @id @default(autoincrement())
+  riderId       Int
+  rider         User      @relation("RiderTrips", fields: [riderId], references: [id])
+  driverId      Int?
+  driver        Driver?   @relation("DriverTrips", fields: [driverId], references: [id])
+  
+  pickupLat     Float
+  pickupLng     Float
+  pickupAddress String?
+  dropOffLat    Float
+  dropOffLng    Float
+  dropOffAddress String?
+
+  status        String    @default("PENDING") // PENDING, ACCEPTED, IN_PROGRESS, COMPLETED, CANCELLED
+  distanceKm    Float?
+  durationMin   Int?
+  fare          Float?    // التسعيرة الإجمالية
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  payment       Payment?
+  messages      Message[]
+}
+
+model PricingRule {
+  id            Int       @id @default(autoincrement())
+  vehicleType   String    @unique @default("Tricycle")
+  baseFare      Float     @default(5.0)  // السعر الابتدائي
+  perKmRate     Float     @default(3.0)  // السعر لكل كيلو متر
+  perMinRate    Float     @default(0.5)  // السعر لكل دقيقة انتظار
+  surgeMultiplier Float   @default(1.0)  // وقت الذروة
+  updatedAt     DateTime  @updatedAt
+}
+
+model Payment {
+  id            Int       @id @default(autoincrement())
+  tripId        Int?      @unique
+  trip          Trip?     @relation(fields: [tripId], references: [id])
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  
+  amount        Float
+  method        String    @default("PAYMOB") // CASH, WALLET, PAYMOB
+  status        String    @default("PENDING") // PENDING, SUCCESS, FAILED
+  paymobOrderId String?   @unique // To map Paymob transaction locally
+  
+  createdAt     DateTime  @default(now())
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  tripId    Int
+  trip      Trip     @relation(fields: [tripId], references: [id])
+  senderId  Int
+  content   String
+  createdAt DateTime @default(now())
+}

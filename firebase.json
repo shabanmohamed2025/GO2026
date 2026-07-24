@@ -1,0 +1,37 @@
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "go-shaban",
+          "appId": "1:381146946885:android:cb16f55a4c3ad4593eb22c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "go-shaban",
+          "configurations": {
+            "android": "1:381146946885:android:cb16f55a4c3ad4593eb22c",
+            "ios": "1:381146946885:ios:ff3124c9becdef163eb22c",
+            "windows": "1:381146946885:web:b9123d07fdcb9ea83eb22c"
+          }
+        }
+      }
+    }
+  }
+}

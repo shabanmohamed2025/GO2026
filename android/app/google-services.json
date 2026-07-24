@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "381146946885",
+    "project_id": "go-shaban",
+    "storage_bucket": "go-shaban.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381146946885:android:0047ed1e7b23e46c3eb22c",
+        "android_client_info": {
+          "package_name": "tricycleTOP.go.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381146946885-9jkvv2t9h184nah2k0ji9694dm5d73e9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tricycleTOP.go.com",
+            "certificate_hash": "bcbdea282d322316c3ce1e40b081bb9e809b483b"
+          }
+        },
+        {
+          "client_id": "381146946885-3r6mh2tdi6j5hc2hbntvf1f4lps1tdj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNIBqKB_rhL96lHQFwufYa1nMHWYMjh50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381146946885-3r6mh2tdi6j5hc2hbntvf1f4lps1tdj7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "381146946885-oe93p8c6dl22u02aa7ta9inhv28ru5cb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.uber"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
