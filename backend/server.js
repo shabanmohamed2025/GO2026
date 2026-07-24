@@ -23,6 +23,17 @@ const app = express();
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
+
+// مثال للاتصال بقاعدة البيانات بشكل آمن لا يغلق حاوية التشغيل (باستخدام Prisma)
+async function connectDB() {
+    try {
+        await prisma.$connect();
+        console.log('Database connected successfully');
+    } catch (error) {
+        console.error('Database connection failed, but server will stay alive:', error);
+    }
+}
+connectDB();
 // ⚠️ الجزء الأهم لحل مشكلتك: إعداد المنفذ والمضيف تلقائياً
 const PORT = process.env.PORT || 8080;
 
