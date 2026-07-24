@@ -23,7 +23,7 @@ const app = express();
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
-// الكود يقرأ المنفذ من السيرفر أولاً، وإذا لم يجده يستخدم 8080 كمنفذ احتياطي محلي
+// التأكد من استخدام متغير البيئة أو المنفذ الافتراضي المعتمد
 const PORT = process.env.PORT || 8080;
 
 // إعداد Helmet لحماية مسارات HTTP Headers ومنع الـ XSS
@@ -1136,6 +1136,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', db: 'PostgreSQL will be connected here' });
 });
 
+// المضيف '0.0.0.0' إجباري تماماً ليقبل الخادم الاتصال الخارجي
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });
