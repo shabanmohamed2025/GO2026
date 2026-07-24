@@ -6,10 +6,10 @@ class ApiConfig {
   static String serverIp = '10.125.41.170';
   
   // 2. منفذ السيرفر (Port)
-  static int serverPort = 3000;
+  static int serverPort = 8080;
 
   // 3. الرابط الرسمي المباشر والشغال للمشروع (HTTPS Tunnel)
-  static String? customServerUrl = 'https://node-backend--go-shaban.us-east4.hosted.app';
+  static String? customServerUrl = null;
 
   /// الحصول على الرابط المناسب تلقائياً حسب نوع الجهاز (موبايل/كمبيوتر/ويب)
   static String get baseUrl {
