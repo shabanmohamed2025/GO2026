@@ -1142,6 +1142,145 @@ app.get('/api/admin/financials', verifyCustomJWT, async (req, res) => {
   }
 });
 
+// ============================================
+// مسارات الإدارة (Admin Dashboard)
+// ============================================
+
+// 1. الإحصائيات (Metrics)
+app.get('/api/admin/metrics', async (req, res) => {
+  try {
+    const totalUsers = await prisma.user.count({ where: { role: 'USER' } });
+    const totalDrivers = await prisma.user.count({ where: { role: 'DRIVER' } });
+    const totalTrips = await prisma.trip.count();
+    const activeTrips = await prisma.trip.count({
+      where: { status: { in: ['IN_PROGRESS', 'ACCEPTED'] } }
+    });
+    
+    // جلب آخر 5 رحلات كمثال
+    const recentTrips = await prisma.trip.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: { rider: { select: { name: true, phone: true } }, driver: { select: { user: { select: { name: true } } } } }
+    });
+
+    const payload = JSON.stringify({
+      metrics: {
+        totalUsers,
+        totalDrivers,
+        totalTrips,
+        activeTrips,
+        totalRevenue: 2450.0 // Mocked for now until integrated with payments
+      },
+      recentTrips
+    });
+    
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(payload) });
+  } catch (error) {
+    console.error('Admin metrics error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 2. جلب جميع السائقين للإدارة
+app.get('/api/admin/drivers', async (req, res) => {
+  try {
+    const drivers = await prisma.driver.findMany({
+      include: { user: { select: { name: true, phone: true, firebaseUid: true } } }
+    });
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(JSON.stringify({ drivers })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// قائمة بجميع المستخدمين (الركاب)
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({ where: { role: 'USER' } });
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(JSON.stringify({ users })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// قائمة بجميع الرحلات
+app.get('/api/admin/trips', async (req, res) => {
+  try {
+    const trips = await prisma.trip.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { rider: { select: { name: true, phone: true } }, driver: { select: { user: { select: { name: true } } } } }
+    });
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(JSON.stringify({ trips })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// المعاملات المالية (للفاتورة والأرباح)
+app.get('/api/admin/financials', async (req, res) => {
+  try {
+    const payments = await prisma.payment.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { name: true, phone: true } }, trip: true }
+    });
+    const totalRevenue = payments.reduce((acc, pay) => acc + pay.amount, 0);
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(JSON.stringify({ payments, totalRevenue, totalTransactions: payments.length })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// 3. الموافقة على السائق
+app.post('/api/admin/drivers/:id/approve', async (req, res) => {
+  try {
+    await prisma.driver.update({
+      where: { id: parseInt(req.params.id) },
+      data: { approvalStatus: 'APPROVED' }
+    });
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(JSON.stringify({ success: true })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Error approving driver' });
+  }
+});
+
+// 4. رفض السائق
+app.post('/api/admin/drivers/:id/reject', async (req, res) => {
+  try {
+    await prisma.driver.update({
+      where: { id: parseInt(req.params.id) },
+      data: { approvalStatus: 'REJECTED' }
+    });
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(JSON.stringify({ success: true })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Error rejecting driver' });
+  }
+});
+
+// ============================================
+// مسارات السائق (Driver Routes)
+// ============================================
+
+// السائقين القريبين
+app.get('/api/drivers/nearby', async (req, res) => {
+  try {
+    const drivers = await prisma.driver.findMany({
+      where: { isOnline: true, approvalStatus: 'APPROVED' },
+      include: { user: { select: { name: true, phone: true } } }
+    });
+    const { encrypt } = require('./utils/encryption');
+    res.json({ encryptedPayload: encrypt(JSON.stringify({ drivers })) });
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching nearby drivers' });
+  }
+});
+
 // مسار افتراضي (Root Route) لضمان نجاح فحص جوجل التلقائي (Health Check)
 app.get('/', (req, res) => {
     res.status(200).send('Backend Server is Running Successfully!');
