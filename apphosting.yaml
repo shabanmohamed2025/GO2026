@@ -1,4 +1,5 @@
 # apphosting.yaml
+# يجب وضع هذا الملف في المجلد الرئيسي للجذر (Root)
 settings:
   rootDirectory: /backend
 
