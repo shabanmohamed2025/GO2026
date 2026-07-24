@@ -23,7 +23,7 @@ const app = express();
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
-// التأكد من استخدام متغير البيئة أو المنفذ الافتراضي المعتمد
+// ⚠️ الجزء الأهم لحل مشكلتك: إعداد المنفذ والمضيف تلقائياً
 const PORT = process.env.PORT || 8080;
 
 // إعداد Helmet لحماية مسارات HTTP Headers ومنع الـ XSS
@@ -1131,12 +1131,17 @@ app.get('/api/admin/financials', verifyCustomJWT, async (req, res) => {
   }
 });
 
+// مسار افتراضي (Root Route) لضمان نجاح فحص جوجل التلقائي (Health Check)
+app.get('/', (req, res) => {
+    res.status(200).send('Backend Server is Running Successfully!');
+});
+
 // A public health-check route
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', db: 'PostgreSQL will be connected here' });
 });
 
-// المضيف '0.0.0.0' إجباري تماماً ليقبل الخادم الاتصال الخارجي
+// ⚠️ الجزء الأهم لحل مشكلتك: إعداد المنفذ والمضيف تلقائياً
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is listening on port ${PORT}`);
 });
