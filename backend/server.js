@@ -51,9 +51,21 @@ const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 
 const app = express();
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+
+let prisma;
+try {
+  if (process.env.DATABASE_URL) {
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const adapter = new PrismaPg(pool);
+    prisma = new PrismaClient({ adapter });
+  } else {
+    console.warn('DATABASE_URL is not set. Prisma initialized with standard instance.');
+    prisma = new PrismaClient();
+  }
+} catch (err) {
+  console.error('Failed to initialize Prisma/Pool:', err.message);
+  prisma = new PrismaClient();
+}
 
 // مثال للاتصال بقاعدة البيانات بشكل آمن لا يغلق حاوية التشغيل (باستخدام Prisma)
 async function connectDB() {
