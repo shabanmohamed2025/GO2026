@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 /// إعدادات الـ IP ورابط السيرفر للمشروع في مكان واحد مخصص
 class ApiConfig {
   // 1. عنوان IP المحلي للكمبيوتر في شبكة الواي فاي
-  static String serverIp = '10.125.41.170';
+  static String serverIp = '192.168.1.12';
   
   // 2. منفذ السيرفر (Port)
   static int serverPort = 8080;

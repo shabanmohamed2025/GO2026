@@ -35,7 +35,7 @@ async function connectDB() {
 }
 connectDB();
 // ⚠️ الجزء الأهم لحل مشكلتك: إعداد المنفذ والمضيف تلقائياً
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // إعداد Helmet لحماية مسارات HTTP Headers ومنع الـ XSS
 app.use(helmet());
