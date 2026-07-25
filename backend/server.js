@@ -78,7 +78,7 @@ async function connectDB() {
 }
 connectDB();
 // ⚠️ الجزء الأهم لحل مشكلتك: إعداد المنفذ والمضيف تلقائياً
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // إعداد Helmet لحماية مسارات HTTP Headers ومنع الـ XSS
 app.use(helmet());
@@ -1334,7 +1334,6 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', db: 'PostgreSQL will be connected here' });
 });
 
-// ⚠️ الجزء الأهم لحل مشكلتك: إعداد المنفذ والمضيف تلقائياً
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is listening on port ${PORT}`);
 });
