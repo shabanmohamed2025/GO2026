@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "npx prisma generate",
+    "gcp-build": "npx prisma generate",
     "build": "npx prisma generate",
     "start": "npx prisma generate && node server.js"
   },
