@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gcp-build": "prisma generate",
-    "build": "prisma generate",
+    "gcp-build": "npx prisma generate",
+    "build": "npx prisma generate",
     "start": "node server.js"
   },
   "keywords": [],
