@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gcp-build": "npx prisma generate && node -e \"const fs=require('fs'); if(fs.existsSync('generated_client')) fs.cpSync('generated_client', 'node_modules/@prisma/client', {recursive: true});\"",
-    "build": "npx prisma generate",
     "start": "node server.js"
   },
   "keywords": [],
