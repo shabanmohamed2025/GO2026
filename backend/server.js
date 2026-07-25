@@ -15,7 +15,7 @@ initializeApp({
   credential: cert(serviceAccount)
 });
 
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('./generated_client');
 const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 
