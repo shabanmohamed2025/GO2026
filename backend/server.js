@@ -10,10 +10,25 @@ const jwt = require('jsonwebtoken');
 dotenv.config();
 
 // Initialize Firebase Admin
-const serviceAccount = require('./firebase-service-account.json');
-initializeApp({
-  credential: cert(serviceAccount)
-});
+try {
+  const fs = require('fs');
+  const path = require('path');
+  const serviceAccountPath = path.join(__dirname, 'firebase-service-account.json');
+  
+  if (fs.existsSync(serviceAccountPath)) {
+    const serviceAccount = require(serviceAccountPath);
+    initializeApp({
+      credential: cert(serviceAccount)
+    });
+    console.log('Firebase initialized with local service account.');
+  } else {
+    initializeApp();
+    console.log('Firebase initialized with Application Default Credentials.');
+  }
+} catch (error) {
+  console.error('Error initializing Firebase:', error);
+  initializeApp(); // fallback 
+}
 
 // --- PRIORITY PRISMA ALIAS FOR GCP BUILDPACKS ---
 // GCP Buildpacks delete hidden folders like .prisma/client
