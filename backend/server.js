@@ -31,6 +31,11 @@ try {
 }
 
 const app = express();
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is listening on port ${PORT}`);
+});
 
 let prisma;
 try {
@@ -72,8 +77,7 @@ async function connectDB() {
     }
 }
 connectDB();
-// ⚠️ الجزء الأهم لحل مشكلتك: إعداد المنفذ والمضيف تلقائياً
-const PORT = process.env.PORT || 8080;
+// ⚠️ المنفذ تم إعداده في البداية
 
 // إعداد Helmet لحماية مسارات HTTP Headers ومنع الـ XSS
 app.use(helmet());
@@ -1329,6 +1333,4 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', db: 'PostgreSQL will be connected here' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is listening on port ${PORT}`);
-});
+
