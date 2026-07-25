@@ -30,23 +30,7 @@ try {
   initializeApp(); // fallback 
 }
 
-// --- PRIORITY PRISMA ALIAS FOR GCP BUILDPACKS ---
-// GCP Buildpacks delete hidden folders like .prisma/client
-// We intercept requires to point to our un-deletable generated_client folder
-const Module = require('module');
-const originalRequire = Module.prototype.require;
-Module.prototype.require = function(id) {
-  if (id === '@prisma/client') {
-    return originalRequire.call(this, require('path').join(__dirname, 'generated_client'));
-  }
-  if (id.startsWith('@prisma/client/')) {
-    return originalRequire.call(this, require('path').join(__dirname, 'generated_client', id.replace('@prisma/client/', '')));
-  }
-  return originalRequire.apply(this, arguments);
-};
-// ------------------------------------------------
-
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('./generated_client');
 const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 
