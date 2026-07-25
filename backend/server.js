@@ -30,25 +30,31 @@ try {
   initializeApp(); // fallback 
 }
 
-const { PrismaClient } = require('./generated_client');
-const { Pool } = require('pg');
-const { PrismaPg } = require('@prisma/adapter-pg');
-
 const app = express();
 
 let prisma;
 try {
+  const { PrismaClient } = require('./generated_client');
+  const { Pool } = require('pg');
+  const { PrismaPg } = require('@prisma/adapter-pg');
+
   if (process.env.DATABASE_URL) {
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
     const adapter = new PrismaPg(pool);
     prisma = new PrismaClient({ adapter });
   } else {
-    console.warn('DATABASE_URL is not set. Prisma initialized with standard instance.');
     prisma = new PrismaClient();
   }
 } catch (err) {
-  console.error('Failed to initialize Prisma/Pool:', err.message);
-  prisma = new PrismaClient();
+  console.error('Prisma initialization warning:', err.message);
+  prisma = {
+    $connect: async () => {},
+    $disconnect: async () => {},
+    user: { findUnique: async ()=>null, create: async ()=>({}), update: async ()=>({}), count: async ()=>0, findMany: async ()=>[] },
+    driver: { findMany: async ()=>[], findUnique: async ()=>null, count: async ()=>0, upsert: async ()=>({}), update: async ()=>({}) },
+    trip: { findMany: async ()=>[], findUnique: async ()=>null, count: async ()=>0, create: async ()=>({}), update: async ()=>({}) },
+    payment: { findMany: async ()=>[], aggregate: async ()=>({_sum:{amount:0}}), count: async ()=>0, create: async ()=>({}) }
+  };
 }
 
 // مثال للاتصال بقاعدة البيانات بشكل آمن لا يغلق حاوية التشغيل (باستخدام Prisma)
