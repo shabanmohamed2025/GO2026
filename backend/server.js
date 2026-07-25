@@ -34,7 +34,12 @@ const app = express();
 
 let prisma;
 try {
-  const { PrismaClient } = require('./generated_client');
+  let PrismaClient;
+  try {
+    PrismaClient = require('@prisma/client').PrismaClient;
+  } catch (e) {
+    PrismaClient = require('./generated_client').PrismaClient;
+  }
   const { Pool } = require('pg');
   const { PrismaPg } = require('@prisma/adapter-pg');
 
